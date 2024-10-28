@@ -1,0 +1,203 @@
+-- ElegantLib.lua
+
+local ElegantLib = {}
+ElegantLib.__index = ElegantLib
+
+-- Função para criar uma nova instância de ElegantLib
+function ElegantLib.new()
+    local self = setmetatable({}, ElegantLib)
+    self.windows = {}
+    return self
+end
+
+-- Função para criar um novo botão
+function ElegantLib:createButton(parent, text, size, position, callback)
+    local button = Instance.new("TextButton")
+    button.Size = size or UDim2.new(0, 100, 0, 50)
+    button.Position = position or UDim2.new(0, 0, 0, 0)
+    button.Text = text or "Button"
+    button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextColor3 = Color3.fromRGB(0, 0, 0)
+    button.Parent = parent
+
+    button.MouseButton1Click:Connect(function()
+        if callback then
+            callback()
+        end
+    end)
+
+    return button
+end
+
+-- Função para criar um novo Label
+function ElegantLib:createLabel(parent, text, size, position)
+    local label = Instance.new("TextLabel")
+    label.Size = size or UDim2.new(0, 100, 0, 50)
+    label.Position = position or UDim2.new(0, 0, 0, 0)
+    label.Text = text or "Label"
+    label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextColor3 = Color3.fromRGB(0, 0, 0)
+    label.Parent = parent
+    return label
+end
+
+-- Função para criar uma nova Janela
+function ElegantLib:createWindow(title)
+    local window = Instance.new("Frame")
+    window.Size = UDim2.new(0.5, 0, 0.5, 0)
+    window.Position = UDim2.new(0.25, 0, 0.25, 0)
+    window.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    window.BorderSizePixel = 0
+    window.Parent = game.Players.LocalPlayer.PlayerGui:WaitForChild("ScreenGui")
+
+    local titleLabel = self:createLabel(window, title, UDim2.new(1, 0, 0, 50), UDim2.new(0, 0, 0, 0))
+    titleLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+
+    table.insert(self.windows, window)
+    return window
+end
+
+-- Função para adicionar um evento de escuta a um objeto
+function ElegantLib:addEvent(object, event, callback)
+    object[event]:Connect(callback)
+end
+
+-- Função utilitária para criar uma nova linha em uma tabela
+function ElegantLib:createTableRow(table, values)
+    local row = {}
+    for i, value in ipairs(values) do
+        row[i] = value
+    end
+    table[#table + 1] = row
+end
+
+-- Função para exibir uma mensagem de alerta
+function ElegantLib:alert(message)
+    local player = game.Players.LocalPlayer
+    local gui = Instance.new("ScreenGui", player.PlayerGui)
+    local alertFrame = Instance.new("Frame", gui)
+    alertFrame.Size = UDim2.new(0.5, 0, 0.3, 0)
+    alertFrame.Position = UDim2.new(0.25, 0, 0.35, 0)
+    alertFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    
+    local alertLabel = self:createLabel(alertFrame, message, UDim2.new(1, 0, 0.8, 0), UDim2.new(0, 0, 0, 0))
+    alertLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    
+    self:createButton(alertFrame, "Close", UDim2.new(0.3, 0, 0.2, 0), UDim2.new(0.35, 0, 0.8, 0), function()
+        gui:Destroy()
+    end)
+end
+
+-- Função para criar um dropdown
+function ElegantLib:createDropdown(parent, options, size, position, callback)
+    local dropdown = Instance.new("Frame")
+    dropdown.Size = size or UDim2.new(0, 200, 0, 50)
+    dropdown.Position = position or UDim2.new(0, 0, 0, 0)
+    dropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    dropdown.Parent = parent
+
+    local label = self:createLabel(dropdown, "Select an option", UDim2.new(1, 0, 0, 50), UDim2.new(0, 0, 0, 0))
+    
+    local dropdownButton = Instance.new("TextButton")
+    dropdownButton.Size = UDim2.new(1, 0, 0, 50)
+    dropdownButton.Text = "Dropdown"
+    dropdownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    dropdownButton.Parent = dropdown
+
+    local optionsFrame = Instance.new("Frame")
+    optionsFrame.Size = UDim2.new(1, 0, 0, 0)
+    optionsFrame.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+    optionsFrame.Position = UDim2.new(0, 0, 1, 0)
+    optionsFrame.Visible = false
+    optionsFrame.Parent = dropdown
+
+    for _, option in ipairs(options) do
+        local optionButton = Instance.new("TextButton")
+        optionButton.Size = UDim2.new(1, 0, 0, 30)
+        optionButton.Text = option
+        optionButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        optionButton.Parent = optionsFrame
+
+        optionButton.MouseButton1Click:Connect(function()
+            dropdownButton.Text = option
+            optionsFrame.Visible = false
+            if callback then
+                callback(option)
+            end
+        end)
+    end
+
+    dropdownButton.MouseButton1Click:Connect(function()
+        optionsFrame.Visible = not optionsFrame.Visible
+    end)
+
+    return dropdown
+end
+
+-- Função para criar um slider
+function ElegantLib:createSlider(parent, min, max, default, size, position, callback)
+    local slider = Instance.new("Frame")
+    slider.Size = size or UDim2.new(0, 200, 0, 50)
+    slider.Position = position or UDim2.new(0, 0, 0, 0)
+    slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    slider.Parent = parent
+
+    local sliderButton = Instance.new("TextButton")
+    sliderButton.Size = UDim2.new(1, 0, 0, 20)
+    sliderButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    sliderButton.Parent = slider
+
+    local valueLabel = self:createLabel(slider, tostring(default), UDim2.new(1, 0, 0, 20), UDim2.new(0, 0, 0, 20))
+
+    sliderButton.MouseButton1Down:Connect(function()
+        local function onDrag()
+            local mouse = game.Players.LocalPlayer:GetMouse()
+            local pos = math.clamp(mouse.X - slider.AbsolutePosition.X, 0, slider.Size.X.Offset)
+            local value = math.round(((pos / slider.Size.X.Offset) * (max - min)) + min)
+            valueLabel.Text = tostring(value)
+            if callback then
+                callback(value)
+            end
+        end
+
+        game:GetService("UserInputService").InputChanged:Connect(onDrag)
+
+        game:GetService("UserInputService").InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                game:GetService("UserInputService").InputChanged:Disconnect(onDrag)
+            end
+        end)
+    end)
+
+    return slider
+end
+
+-- Função para limpar todas as janelas
+function ElegantLib:clearWindows()
+    for _, window in ipairs(self.windows) do
+        window:Destroy()
+    end
+    self.windows = {}
+end
+
+-- Função de exemplo para demonstrar a biblioteca
+function ElegantLib:exampleUsage()
+    self:clearWindows()  -- Limpa janelas antigas
+
+    local window = self:createWindow("My Elegant Library")
+
+    self:createLabel(window, "Choose an option:", UDim2.new(1, 0, 0, 30), UDim2.new(0, 0, 0, 50))
+    self:createButton(window, "Alert Me!", UDim2.new(0.5, 0, 0, 50), UDim2.new(0.25, 0, 0, 100), function()
+        self:alert("Hello from ElegantLib!")
+    end)
+
+    self:createDropdown(window, {"Option 1", "Option 2", "Option 3"}, UDim2.new(0.5, 0, 0, 50), UDim2.new(0.25, 0, 0, 150), function(selected)
+        self:alert("You selected: " .. selected)
+    end)
+
+    self:createSlider(window, 0, 100, 50, UDim2.new(0.5, 0, 0, 50), UDim2.new(0.25, 0, 0, 200), function(value)
+        print("Slider value: " .. value)
+    end)
+end
+
+return ElegantLib
