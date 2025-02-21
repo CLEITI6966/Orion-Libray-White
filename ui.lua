@@ -1,25 +1,54 @@
--- Library.lua
+-- ui.lua
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
 local Library = {}
 
-function Library.Create()
-    local GUI = {}
-    local elements = {}
-    local theme = {
-        Main = Color3.fromRGB(40, 40, 40),
-        Secondary = Color3.fromRGB(30, 30, 30),
+-- Temas disponíveis
+local Themes = {
+    Purple = {
+        Main = Color3.fromRGB(40, 40, 60),
+        Secondary = Color3.fromRGB(60, 50, 80),
+        Accent = Color3.fromRGB(150, 100, 255),
+        Text = Color3.fromRGB(255, 255, 255)
+    },
+    Blue = {
+        Main = Color3.fromRGB(30, 30, 50),
+        Secondary = Color3.fromRGB(50, 70, 90),
         Accent = Color3.fromRGB(0, 170, 255),
         Text = Color3.fromRGB(255, 255, 255)
+    },
+    Red = {
+        Main = Color3.fromRGB(50, 30, 30),
+        Secondary = Color3.fromRGB(90, 50, 50),
+        Accent = Color3.fromRGB(255, 50, 50),
+        Text = Color3.fromRGB(255, 255, 255)
+    },
+    Green = {
+        Main = Color3.fromRGB(30, 50, 30),
+        Secondary = Color3.fromRGB(50, 90, 50),
+        Accent = Color3.fromRGB(50, 255, 50),
+        Text = Color3.fromRGB(255, 255, 255)
     }
+}
 
-    -- Criar janela principal
+-- Função para criar a biblioteca
+function Library:Create()
+    local gui = {}
+    local elements = {}
+    local theme = Themes.Purple -- Tema padrão
+
+    -- Criar a janela principal
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
     local TitleBar = Instance.new("Frame")
     local TitleLabel = Instance.new("TextLabel")
     local ContentFolder = Instance.new("Folder")
 
-    ScreenGui.Name = "BeautifulLibrary"
+    ScreenGui.Name = "BeautifulLib"
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
     MainFrame.Name = "MainFrame"
     MainFrame.BackgroundColor3 = theme.Main
@@ -53,7 +82,7 @@ function Library.Create()
     ContentFolder.Name = "ContentFolder"
     ContentFolder.Parent = MainFrame
 
-    -- Função de arrastar
+    -- Função de arrastar a janela
     local dragging
     local dragInput
     local dragStart
@@ -90,12 +119,8 @@ function Library.Create()
         end
     end)
 
-    -- Funções públicas
-    function GUI.SetTitle(text)
-        TitleLabel.Text = text
-    end
-
-    function GUI.CreateToggle(options)
+    -- Função para criar um toggle
+    function gui:CreateToggle(options)
         local toggle = {}
         local element = Instance.new("Frame")
         local button = Instance.new("TextButton")
@@ -161,10 +186,9 @@ function Library.Create()
         return toggle
     end
 
-    -- Adicione funções similares para CreateTextBox, CreateColorPicker, etc.
+    -- Adicione funções para outros elementos (Slider, TextBox, ColorPicker, etc.)
 
-    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-    return GUI
+    return gui
 end
 
 return Library
