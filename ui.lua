@@ -1,88 +1,110 @@
--- ui.lua
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-
 local Library = {}
+local UserInputService = game:GetService("UserInputService")
 
--- Temas disponíveis
+-- 🎨 Paleta de cores
 local Themes = {
-    Purple = {
-        Main = Color3.fromRGB(40, 40, 60),
-        Secondary = Color3.fromRGB(60, 50, 80),
-        Accent = Color3.fromRGB(150, 100, 255),
-        Text = Color3.fromRGB(255, 255, 255)
-    },
-    Blue = {
-        Main = Color3.fromRGB(30, 30, 50),
-        Secondary = Color3.fromRGB(50, 70, 90),
-        Accent = Color3.fromRGB(0, 170, 255),
-        Text = Color3.fromRGB(255, 255, 255)
-    },
-    Red = {
-        Main = Color3.fromRGB(50, 30, 30),
-        Secondary = Color3.fromRGB(90, 50, 50),
-        Accent = Color3.fromRGB(255, 50, 50),
-        Text = Color3.fromRGB(255, 255, 255)
-    },
-    Green = {
-        Main = Color3.fromRGB(30, 50, 30),
-        Secondary = Color3.fromRGB(50, 90, 50),
-        Accent = Color3.fromRGB(50, 255, 50),
-        Text = Color3.fromRGB(255, 255, 255)
+    Dark = {
+        Background = Color3.fromRGB(30, 30, 30),
+        Accent = Color3.fromRGB(40, 40, 40),
+        Text = Color3.fromRGB(230, 230, 230),
+        Highlight = Color3.fromRGB(85, 170, 255),
+        Shadow = Color3.fromRGB(0, 0, 0, 0.3)
     }
 }
 
--- Função para criar a biblioteca
-function Library:Create()
+-- 📌 Criar a Interface Principal
+function Library:Create(title)
+    local theme = Themes.Dark
     local gui = {}
-    local elements = {}
-    local theme = Themes.Purple -- Tema padrão
 
-    -- Criar a janela principal
+    -- 📌 Criar a GUI
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
     local TitleBar = Instance.new("Frame")
     local TitleLabel = Instance.new("TextLabel")
     local ContentFolder = Instance.new("Folder")
 
-    ScreenGui.Name = "BeautifulLib"
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    ScreenGui.Name = "ModernLib"
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
+    -- 🎨 Janela Principal
     MainFrame.Name = "MainFrame"
-    MainFrame.BackgroundColor3 = theme.Main
-    MainFrame.Size = UDim2.new(0, 300, 0, 400)
-    MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+    MainFrame.BackgroundColor3 = theme.Background
+    MainFrame.Size = UDim2.new(0, 320, 0, 420)
+    MainFrame.Position = UDim2.new(0.5, -160, 0.5, -210)
     MainFrame.ClipsDescendants = true
     MainFrame.Parent = ScreenGui
 
+    -- 🔥 Sombra
+    local Shadow = Instance.new("ImageLabel")
+    Shadow.Name = "Shadow"
+    Shadow.Parent = MainFrame
+    Shadow.BackgroundTransparency = 1
+    Shadow.Size = UDim2.new(1, 20, 1, 20)
+    Shadow.Position = UDim2.new(0, -10, 0, -10)
+    Shadow.Image = "rbxassetid://1316045217" 
+    Shadow.ImageTransparency = 0.5
+
+    -- 🔲 Arredondamento
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.CornerRadius = UDim.new(0, 10)
     UICorner.Parent = MainFrame
 
+    -- 🏷️ Barra de Título
     TitleBar.Name = "TitleBar"
-    TitleBar.BackgroundColor3 = theme.Secondary
-    TitleBar.Size = UDim2.new(1, 0, 0, 30)
+    TitleBar.BackgroundColor3 = theme.Accent
+    TitleBar.Size = UDim2.new(1, 0, 0, 40)
     TitleBar.Parent = MainFrame
 
+    -- 📌 Texto do Título
     TitleLabel.Name = "TitleLabel"
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Size = UDim2.new(1, 0, 1, 0)
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.TextColor3 = theme.Text
-    TitleLabel.TextSize = 14
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.TextSize = 16
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Center
+    TitleLabel.Text = title or "Painel Moderno"
     TitleLabel.Parent = TitleBar
 
-    local UIPadding = Instance.new("UIPadding")
-    UIPadding.PaddingLeft = UDim.new(0, 10)
-    UIPadding.Parent = TitleLabel
-
+    -- 📌 Conteúdo da GUI
     ContentFolder.Name = "ContentFolder"
     ContentFolder.Parent = MainFrame
 
-    -- Função de arrastar a janela
+    -- 🚀 Função para criar Botões
+    function gui:CreateButton(text, callback)
+        local Button = Instance.new("TextButton")
+        Button.Name = "Button"
+        Button.Parent = MainFrame
+        Button.BackgroundColor3 = theme.Highlight
+        Button.Size = UDim2.new(0.8, 0, 0, 40)
+        Button.Position = UDim2.new(0.1, 0, 0, 50)
+        Button.Font = Enum.Font.Gotham
+        Button.Text = text
+        Button.TextColor3 = theme.Text
+        Button.TextSize = 14
+
+        -- 🔲 Arredondamento do botão
+        local UICorner = Instance.new("UICorner")
+        UICorner.CornerRadius = UDim.new(0, 6)
+        UICorner.Parent = Button
+
+        -- 💡 Hover Effect
+        Button.MouseEnter:Connect(function()
+            Button.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+        end)
+        Button.MouseLeave:Connect(function()
+            Button.BackgroundColor3 = theme.Highlight
+        end)
+
+        Button.MouseButton1Click:Connect(function()
+            if callback then
+                callback()
+            end
+        end)
+    end
+
+    -- 🎯 Drag para mover a GUI
     local dragging
     local dragInput
     local dragStart
@@ -118,75 +140,6 @@ function Library:Create()
             update(input)
         end
     end)
-
-    -- Função para criar um toggle
-    function gui:CreateToggle(options)
-        local toggle = {}
-        local element = Instance.new("Frame")
-        local button = Instance.new("TextButton")
-        local toggleFrame = Instance.new("Frame")
-        local toggleCircle = Instance.new("Frame")
-
-        element.Name = "Toggle"
-        element.BackgroundTransparency = 1
-        element.Size = UDim2.new(1, -20, 0, 30)
-        element.Position = UDim2.new(0, 10, 0, #elements * 35 + 40)
-        element.Parent = ContentFolder
-
-        button.Name = "Button"
-        button.BackgroundTransparency = 1
-        button.Size = UDim2.new(1, 0, 1, 0)
-        button.Font = Enum.Font.Gotham
-        button.Text = "  "..options.Text
-        button.TextColor3 = theme.Text
-        button.TextSize = 12
-        button.TextXAlignment = Enum.TextXAlignment.Left
-        button.Parent = element
-
-        toggleFrame.Name = "ToggleFrame"
-        toggleFrame.BackgroundColor3 = theme.Secondary
-        toggleFrame.Size = UDim2.new(0, 50, 0, 25)
-        toggleFrame.Position = UDim2.new(1, -50, 0.5, -12)
-        toggleFrame.Parent = element
-
-        UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(1, 0)
-        UICorner.Parent = toggleFrame
-
-        toggleCircle.Name = "ToggleCircle"
-        toggleCircle.BackgroundColor3 = Color3.new(1, 1, 1)
-        toggleCircle.Size = UDim2.new(0, 21, 0, 21)
-        toggleCircle.Position = UDim2.new(0, 2, 0.5, -10)
-        toggleCircle.Parent = toggleFrame
-
-        UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(1, 0)
-        UICorner.Parent = toggleCircle
-
-        local state = options.Default or false
-        local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
-        local function updateToggle()
-            local tween = TweenService:Create(toggleCircle, tweenInfo, {
-                Position = state and UDim2.new(1, -23, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
-            })
-            tween:Play()
-            toggleFrame.BackgroundColor3 = state and theme.Accent or theme.Secondary
-        end
-
-        button.MouseButton1Click:Connect(function()
-            state = not state
-            updateToggle()
-            if options.Callback then
-                options.Callback(state)
-            end
-        end)
-
-        table.insert(elements, element)
-        return toggle
-    end
-
-    -- Adicione funções para outros elementos (Slider, TextBox, ColorPicker, etc.)
 
     return gui
 end
