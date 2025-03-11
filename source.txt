@@ -1455,6 +1455,68 @@ end
 					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 			end 
+			function OrionLib:CreateMinimizeButton(Window, InitialPosition, ButtonImage)
+    local MinimizeBtn = Instance.new("ImageButton")
+    MinimizeBtn.Name = "MinimizeBtn"
+    MinimizeBtn.Size = UDim2.new(0, 40, 0, 40)
+    MinimizeBtn.Position = InitialPosition or UDim2.new(0, 10, 0, 10)
+    MinimizeBtn.Image = ButtonImage or "rbxassetid://7072719338"
+    MinimizeBtn.BackgroundTransparency = 0.5
+    MinimizeBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    MinimizeBtn.BorderSizePixel = 0
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 10)
+    Corner.Parent = MinimizeBtn
+
+    MinimizeBtn.Parent = Window
+
+    local Dragging, DragInput, MousePos, FramePos
+
+    local function UpdatePosition(Input)
+        local Delta = Input.Position - MousePos
+        MinimizeBtn.Position = UDim2.new(FramePos.X.Scale, FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
+    end
+
+    MinimizeBtn.InputBegan:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+            Dragging = true
+            MousePos = Input.Position
+            FramePos = MinimizeBtn.Position
+
+            Input.Changed:Connect(function()
+                if Input.UserInputState == Enum.UserInputState.End then
+                    Dragging = false
+                end
+            end)
+        end
+    end)
+
+    MinimizeBtn.InputChanged:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch then
+            DragInput = Input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(Input)
+        if Input == DragInput and Dragging then
+            UpdatePosition(Input)
+        end
+    end)
+
+    MinimizeBtn.MouseButton1Click:Connect(function()
+        if Window.Visible then
+            Window.Visible = false
+            OrionLib:MakeNotification({
+                Name = "Library Minimized",
+                Content = "Click the button to reopen.",
+                Time = 5
+            })
+        else
+            Window.Visible = true
+        end
+    end)
+end
 			function ElementFunction:AddColorpicker(ColorpickerConfig)
 				ColorpickerConfig = ColorpickerConfig or {}
 				ColorpickerConfig.Name = ColorpickerConfig.Name or "Colorpicker"
