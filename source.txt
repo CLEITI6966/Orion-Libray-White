@@ -143,12 +143,29 @@ local function AddThemeObject(Object, Type)
     
     -- Adiciona transparência ao fundo
     if Object:IsA("Frame") or Object:IsA("TextButton") or Object:IsA("ScrollingFrame") then
-        Object.BackgroundTransparency = 0.5 -- Define a transparência desejada
+        Object.BackgroundTransparency = 1 -- Define a transparência desejada
     end
 
     return Object
 end
 
+-- Aqui definimos a função Create para adicionar a transparência ao criar novos elementos
+local function Create(Name, Properties, Children)
+    local Object = Instance.new(Name)
+    for i, v in next, Properties or {} do
+        Object[i] = v
+    end
+    for i, v in next, Children or {} do
+        v.Parent = Object
+    end
+
+    -- Adiciona transparência ao fundo
+    if Object:IsA("Frame") or Object:IsA("TextButton") or Object:IsA("ScrollingFrame") then
+        Object.BackgroundTransparency = 1 -- Define a transparência desejada
+    end
+    
+    return Object
+end
 
 local function Create(Name, Properties, Children)
 	local Object = Instance.new(Name)
