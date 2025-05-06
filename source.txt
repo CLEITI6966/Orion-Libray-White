@@ -1,3 +1,5 @@
+
+
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -132,39 +134,6 @@ local function AddDraggingFunctionality(DragPoint, Main, DragButton)
             UpdatePosition(Input)
         end
     end)
-end
-
-local function AddThemeObject(Object, Type)
-    if not OrionLib.ThemeObjects[Type] then
-        OrionLib.ThemeObjects[Type] = {}
-    end    
-    table.insert(OrionLib.ThemeObjects[Type], Object)
-    Object[ReturnProperty(Object)] = OrionLib.Themes[OrionLib.SelectedTheme][Type]
-    
-    -- Adiciona transparência ao fundo
-    if Object:IsA("Frame") or Object:IsA("TextButton") or Object:IsA("ScrollingFrame") then
-        Object.BackgroundTransparency = 1 -- Define a transparência desejada
-    end
-
-    return Object
-end
-
--- Aqui definimos a função Create para adicionar a transparência ao criar novos elementos
-local function Create(Name, Properties, Children)
-    local Object = Instance.new(Name)
-    for i, v in next, Properties or {} do
-        Object[i] = v
-    end
-    for i, v in next, Children or {} do
-        v.Parent = Object
-    end
-
-    -- Adiciona transparência ao fundo
-    if Object:IsA("Frame") or Object:IsA("TextButton") or Object:IsA("ScrollingFrame") then
-        Object.BackgroundTransparency = 1 -- Define a transparência desejada
-    end
-    
-    return Object
 end
 
 local function Create(Name, Properties, Children)
@@ -894,50 +863,6 @@ function OrionLib:MakeWindow(WindowConfig)
 				end
 				return ParagraphFunction
 			end    
-			function dateandtime()
-    local function updateDateTime()
-        local currentDateTime = os.date("%Y-%m-%d %H:%M:%S")  -- Formato da data e hora
-        return currentDateTime
-    end
-
-    local ParagraphFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), {
-        Size = UDim2.new(1, 0, 0, 30),
-        BackgroundTransparency = 0.7,
-        Parent = ItemParent
-    }), {
-        AddThemeObject(SetProps(MakeElement("Label", "Data e Hora", 15), {
-            Size = UDim2.new(1, -12, 0, 14),
-            Position = UDim2.new(0, 12, 0, 10),
-            Font = Enum.Font.GothamBold,
-            Name = "Title"
-        }), "Text"),
-        AddThemeObject(SetProps(MakeElement("Label", "", 13), {
-            Size = UDim2.new(1, -24, 0, 0),
-            Position = UDim2.new(0, 12, 0, 26),
-            Font = Enum.Font.GothamSemibold,
-            Name = "Content",
-            TextWrapped = true
-        }), "TextDark"),
-        AddThemeObject(MakeElement("Stroke"), "Stroke")
-    }), "Second")
-
-    AddConnection(ParagraphFrame.Content:GetPropertyChangedSignal("Text"), function()
-        ParagraphFrame.Content.Size = UDim2.new(1, -24, 0, ParagraphFrame.Content.TextBounds.Y)
-        ParagraphFrame.Size = UDim2.new(1, 0, 0, ParagraphFrame.Content.TextBounds.Y + 35)
-    end)
-
-    -- Atualiza a data e hora a cada 0.5 segundos
-    while true do
-        ParagraphFrame.Content.Text = updateDateTime()
-        wait(0.5)
-    end
-
-    local ParagraphFunction = {}
-    function ParagraphFunction:Set(ToChange)
-        ParagraphFrame.Content.Text = ToChange
-    end
-    return ParagraphFunction
-end
 			function ElementFunction:AddButton(ButtonConfig)
 				ButtonConfig = ButtonConfig or {}
 				ButtonConfig.Name = ButtonConfig.Name or "Button"
